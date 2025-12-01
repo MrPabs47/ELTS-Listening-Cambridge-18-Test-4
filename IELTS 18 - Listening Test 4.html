@@ -1165,7 +1165,23 @@
       masterAudio = document.getElementById("testMasterAudio");
       secAudios = [1, 2, 3, 4].map(n => document.getElementById("audioSec" + n));
       volumeBtn = document.getElementById("volumeButton");
-      audioDot = document.getElementById("audioDot");
+      audioDot = document.getElementById("audioStatusDot");
+
+      if (masterAudio) {
+        masterAudio.addEventListener("playing", () => updateAudioUi(true));
+        ["pause", "ended"].forEach(ev =>
+          masterAudio.addEventListener(ev, () => updateAudioUi(false))
+        );
+      }
+
+      secAudios.forEach(a => {
+        if (!a) return;
+        a.addEventListener("play", () => updateAudioUi(true));
+        ["pause", "ended"].forEach(ev =>
+          a.addEventListener(ev, () => updateAudioUi(false))
+        );
+      });
+
       if (volumeBtn) {
         volumeBtn.addEventListener("click", toggleMuteAll);
       }
@@ -1176,12 +1192,16 @@
       const newMuted = !(masterAudio && masterAudio.muted === true);
       if (masterAudio) masterAudio.muted = newMuted;
       secAudios.forEach(a => { if (a) a.muted = newMuted; });
-      if (volumeBtn) volumeBtn.textContent = newMuted ? "🔈" : "🔊";
+      if (volumeBtn) {
+        volumeBtn.setAttribute("aria-pressed", newMuted ? "true" : "false");
+        volumeBtn.title = newMuted ? "Volume (muted)" : "Volume";
+      }
     }
 
     function updateAudioUi(playing) {
       if (!audioDot) return;
-      audioDot.style.backgroundColor = playing ? "#2ecc71" : "#777777";
+      audioDot.classList.toggle("on", playing);
+      audioDot.setAttribute("aria-label", playing ? "Audio playing" : "Audio paused");
     }
 
     function startTimer(totalSeconds) {
@@ -1236,11 +1256,9 @@
       if (masterAudio) {
         masterAudio.currentTime = 0;
         masterAudio.play().catch(() => {});
-        masterAudio.onplaying = () => updateAudioUi(true);
-        masterAudio.onpause = () => updateAudioUi(false);
-      } else {
-        updateAudioUi(false);
       }
+
+      updateAudioUi(false);
 
       // total listening time (about 30 minutes) + 2 minutes checking
       startTimer(32 * 60);
