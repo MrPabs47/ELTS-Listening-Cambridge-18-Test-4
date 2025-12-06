@@ -261,6 +261,10 @@
       overflow: auto;
     }
 
+    .question-scroll {
+      overflow-x: hidden;
+    }
+
     .question-area {
       background: var(--bg-panel);
       border: 1px solid var(--border-subtle);
@@ -392,33 +396,39 @@
 
     .bottom-left {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: flex-start;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
     }
 
-    .part-tabs {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
     .chips-label {
       font-size: 12px;
       opacity: 0.8;
       margin-right: 4px;
+      white-space: nowrap;
+    }
+
+    .part-summary-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
 
     .part-chip {
-      border-radius: 16px;
+      border-radius: 14px;
       border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
+      padding: 6px 10px;
       font-size: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: var(--bg-main);
+      white-space: nowrap;
     }
     .part-chip.active {
       border-color: var(--accent);
@@ -431,50 +441,55 @@
       border-color: var(--accent-strong);
       background: rgba(0, 123, 85, 0.08);
     }
-    .part-chip .tick {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid var(--accent-strong);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: var(--accent-strong);
+
+    .part-name {
+      font-weight: 600;
     }
 
-    .question-tabs {
+    .part-count {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .qnav-strip {
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
-    .qnav-container {
+
+    .qnav-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      max-width: 520px;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 6px 0;
     }
-    .qnav {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
+
+    .qnav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       border: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
       user-select: none;
       background: var(--bg-main);
     }
-    .qnav.answered {
+    .qnav-btn.answered {
       background: var(--accent-soft);
       border-color: var(--accent);
     }
-    .qnav.current {
+    .qnav-btn.current {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-soft);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+      font-weight: 700;
     }
 
     .bottom-right-controls {
@@ -791,8 +806,8 @@
           see feedback.</li>
       </ul>
       <div class="overlay-buttons">
-        <button class="btn-outline" id="studyModeBtn">Study mode</button>
-        <button class="btn-primary" id="testModeBtn">Test mode</button>
+        <button type="button" class="btn-outline" id="studyModeBtn">Study mode</button>
+        <button type="button" class="btn-primary" id="testModeBtn">Test mode</button>
       </div>
     </div>
   </div>
@@ -805,7 +820,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="main">
-    <div class="main-inner" id="mainInner">
+    <div class="main-inner question-scroll" id="questionScroll">
       <section class="question-area">
         <div class="question-header-bar" id="questionHeader">
           Part 1 – Questions 1–10 (0 of 10 answered)
@@ -1087,8 +1102,49 @@
                 </div>
                 <input type="text" name="q23" class="dnd-hidden" style="display:none;">
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-            <script>
+  <footer class="bottom-bar" aria-label="Navigation">
+    <div class="bottom-left">
+      <div class="qnav-strip" aria-label="Questions">
+        <div id="qNavRow" class="qnav-row"></div>
+      </div>
+      <div class="part-summary-row" aria-label="Parts">
+        <span class="chips-label">Parts</span>
+        <button type="button" class="part-chip active" data-section-chip="1">
+          <span class="part-name">Part 1</span>
+          <span class="part-count" id="part1Count">0 of 10</span>
+        </button>
+        <button type="button" class="part-chip" data-section-chip="2">
+          <span class="part-name">Part 2</span>
+          <span class="part-count" id="part2Count">0 of 10</span>
+        </button>
+        <button type="button" class="part-chip" data-section-chip="3">
+          <span class="part-name">Part 3</span>
+          <span class="part-count" id="part3Count">0 of 10</span>
+        </button>
+        <button type="button" class="part-chip" data-section-chip="4">
+          <span class="part-name">Part 4</span>
+          <span class="part-count" id="part4Count">0 of 10</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bottom-right-controls">
+      <div class="nav-arrows">
+        <button type="button" id="prevSectionBtn" aria-label="Previous part">◀</button>
+        <button type="button" id="nextSectionBtn" aria-label="Next part">▶</button>
+      </div>
+      <button class="submit-btn" id="submitBtn" type="button">Submit</button>
+    </div>
+  </footer>
+
+  <script>
     // ---------- BASIC STATE ----------
     let mode = "test";                 // "test" or "study"
     let activeSection = 1;
@@ -1165,7 +1221,23 @@
       masterAudio = document.getElementById("testMasterAudio");
       secAudios = [1, 2, 3, 4].map(n => document.getElementById("audioSec" + n));
       volumeBtn = document.getElementById("volumeButton");
-      audioDot = document.getElementById("audioDot");
+      audioDot = document.getElementById("audioStatusDot");
+
+      if (masterAudio) {
+        masterAudio.addEventListener("playing", () => updateAudioUi(true));
+        ["pause", "ended"].forEach(ev =>
+          masterAudio.addEventListener(ev, () => updateAudioUi(false))
+        );
+      }
+
+      secAudios.forEach(a => {
+        if (!a) return;
+        a.addEventListener("play", () => updateAudioUi(true));
+        ["pause", "ended"].forEach(ev =>
+          a.addEventListener(ev, () => updateAudioUi(false))
+        );
+      });
+
       if (volumeBtn) {
         volumeBtn.addEventListener("click", toggleMuteAll);
       }
@@ -1176,12 +1248,16 @@
       const newMuted = !(masterAudio && masterAudio.muted === true);
       if (masterAudio) masterAudio.muted = newMuted;
       secAudios.forEach(a => { if (a) a.muted = newMuted; });
-      if (volumeBtn) volumeBtn.textContent = newMuted ? "🔈" : "🔊";
+      if (volumeBtn) {
+        volumeBtn.setAttribute("aria-pressed", newMuted ? "true" : "false");
+        volumeBtn.title = newMuted ? "Volume (muted)" : "Volume";
+      }
     }
 
     function updateAudioUi(playing) {
       if (!audioDot) return;
-      audioDot.style.backgroundColor = playing ? "#2ecc71" : "#777777";
+      audioDot.classList.toggle("on", playing);
+      audioDot.setAttribute("aria-label", playing ? "Audio playing" : "Audio paused");
     }
 
     function startTimer(totalSeconds) {
@@ -1226,6 +1302,7 @@
     }
 
     function startTestMode() {
+      mode = "test";
       const ov = document.getElementById("modeOverlay");
       if (ov) ov.style.display = "none";
       const timer = document.getElementById("timerDisplay");
@@ -1236,17 +1313,16 @@
       if (masterAudio) {
         masterAudio.currentTime = 0;
         masterAudio.play().catch(() => {});
-        masterAudio.onplaying = () => updateAudioUi(true);
-        masterAudio.onpause = () => updateAudioUi(false);
-      } else {
-        updateAudioUi(false);
       }
+
+      updateAudioUi(false);
 
       // total listening time (about 30 minutes) + 2 minutes checking
       startTimer(32 * 60);
     }
 
     function startStudyMode() {
+      mode = "study";
       const ov = document.getElementById("modeOverlay");
       if (ov) ov.style.display = "none";
       const timer = document.getElementById("timerDisplay");
@@ -1452,12 +1528,14 @@
       if (![1, 2, 3, 4].includes(sec)) return;
       activeSection = sec;
 
-      document
-        .querySelectorAll("#questionScroll > div[data-section]")
-        .forEach(el => (el.style.display = "none"));
-      const secEl = document.querySelector(
-        '#questionScroll > div[data-section="' + sec + '"]'
-      );
+      const scroll = document.getElementById("questionScroll");
+      if (!scroll) return;
+
+      scroll.querySelectorAll("[data-section]").forEach(el => {
+        el.style.display = "none";
+      });
+
+      const secEl = scroll.querySelector('[data-section="' + sec + '"]');
       if (secEl) secEl.style.display = "block";
 
       document
