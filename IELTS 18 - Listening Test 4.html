@@ -806,8 +806,8 @@
           see feedback.</li>
       </ul>
       <div class="overlay-buttons">
-        <button class="btn-outline" id="studyModeBtn">Study mode</button>
-        <button class="btn-primary" id="testModeBtn">Test mode</button>
+        <button type="button" class="btn-outline" id="studyModeBtn">Study mode</button>
+        <button type="button" class="btn-primary" id="testModeBtn">Test mode</button>
       </div>
     </div>
   </div>
@@ -1302,6 +1302,7 @@
     }
 
     function startTestMode() {
+      mode = "test";
       const ov = document.getElementById("modeOverlay");
       if (ov) ov.style.display = "none";
       const timer = document.getElementById("timerDisplay");
@@ -1321,6 +1322,7 @@
     }
 
     function startStudyMode() {
+      mode = "study";
       const ov = document.getElementById("modeOverlay");
       if (ov) ov.style.display = "none";
       const timer = document.getElementById("timerDisplay");
@@ -1526,12 +1528,14 @@
       if (![1, 2, 3, 4].includes(sec)) return;
       activeSection = sec;
 
-      document
-        .querySelectorAll("#questionScroll > div[data-section]")
-        .forEach(el => (el.style.display = "none"));
-      const secEl = document.querySelector(
-        '#questionScroll > div[data-section="' + sec + '"]'
-      );
+      const scroll = document.getElementById("questionScroll");
+      if (!scroll) return;
+
+      scroll.querySelectorAll("[data-section]").forEach(el => {
+        el.style.display = "none";
+      });
+
+      const secEl = scroll.querySelector('[data-section="' + sec + '"]');
       if (secEl) secEl.style.display = "block";
 
       document
