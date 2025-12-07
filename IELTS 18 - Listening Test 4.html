@@ -797,8 +797,8 @@
   <!-- MODE SELECTION OVERLAY -->
   <div id="modeOverlay" class="overlay">
     <div class="overlay-card">
-      <h2>Select mode</h2>
-      <p>Choose how you want to use this listening test.</p>
+      <h2>Choose how you want to use this listening test</h2>
+      <p>Select a mode to start – you'll see all parts and controls once you pick one.</p>
       <ul style="padding-left:18px;margin:6px 0 12px;font-size:13px;">
         <li><strong>Test mode</strong>: hidden audio plays from start to finish, timer counts down, answers are
           checked only when you submit.</li>
@@ -806,8 +806,22 @@
           see feedback.</li>
       </ul>
       <div class="overlay-buttons">
-        <button type="button" class="btn-outline" id="studyModeBtn">Study mode</button>
-        <button type="button" class="btn-primary" id="testModeBtn">Test mode</button>
+        <button
+          type="button"
+          class="btn-outline"
+          id="studyModeBtn"
+          onclick="startStudyMode()"
+        >
+          Study mode
+        </button>
+        <button
+          type="button"
+          class="btn-primary"
+          id="testModeBtn"
+          onclick="startTestMode()"
+        >
+          Test mode
+        </button>
       </div>
     </div>
   </div>
