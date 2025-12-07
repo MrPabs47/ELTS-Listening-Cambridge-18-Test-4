@@ -265,6 +265,10 @@
       overflow-x: hidden;
     }
 
+    .question-scroll {
+      overflow-x: hidden;
+    }
+
     .question-area {
       background: var(--bg-panel);
       border: 1px solid var(--border-subtle);
@@ -1160,7 +1164,7 @@
 
   <script>
     // ---------- BASIC STATE ----------
-    let mode = "test";                 // "test" or "study"
+    let mode = null;                    // "test" or "study"
     let activeSection = 1;
     let currentQuestion = 1;
 
@@ -1315,10 +1319,23 @@
       }
     }
 
+    function showModeOverlay(show) {
+      const ov = document.getElementById("modeOverlay");
+      if (!ov) return;
+      ov.style.display = show ? "flex" : "none";
+      ov.setAttribute("aria-hidden", show ? "false" : "true");
+      document.body.classList.toggle("mode-picked", !show);
+      if (show) {
+        const focusBtn =
+          document.getElementById("testModeBtn") ||
+          document.getElementById("studyModeBtn");
+        if (focusBtn) focusBtn.focus();
+      }
+    }
+
     function startTestMode() {
       mode = "test";
-      const ov = document.getElementById("modeOverlay");
-      if (ov) ov.style.display = "none";
+      showModeOverlay(false);
       const timer = document.getElementById("timerDisplay");
       if (timer) timer.style.display = "inline-block";
 
@@ -1337,8 +1354,7 @@
 
     function startStudyMode() {
       mode = "study";
-      const ov = document.getElementById("modeOverlay");
-      if (ov) ov.style.display = "none";
+      showModeOverlay(false);
       const timer = document.getElementById("timerDisplay");
       if (timer) timer.style.display = "none";
 
@@ -1840,6 +1856,7 @@
     window.addEventListener("load", () => {
       cacheAudioEls();
       setupModeOverlay();
+      showModeOverlay(true);
       setupOptionsMenu();
       initQuestionInputs();
       initDragDrop();
